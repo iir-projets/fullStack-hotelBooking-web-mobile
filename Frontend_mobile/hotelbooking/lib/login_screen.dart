@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'bottom_nav.dart';
 import 'forgot_pass.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -154,7 +154,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.center,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle login button press
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BottomNavBar()), // Replace BottomNavBar() with your intended screen widget
+                        );
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
