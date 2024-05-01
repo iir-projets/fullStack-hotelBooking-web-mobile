@@ -1,5 +1,7 @@
 package com.example.luxevuehotel.service;
 
+import com.example.luxevuehotel.exception.InternalServerException;
+import com.example.luxevuehotel.exception.ResourceNotFoundException;
 import com.example.luxevuehotel.model.Room;
 import com.example.luxevuehotel.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,39 @@ public class RoomServiceImpl implements IRoomService {
             return photoBlob.getBytes(1, (int) photoBlob.length());
         }
         return null;
+    }
+
+    @Override
+    public void deleteRoom(Long roomId) {
+        Optional<Room> theRoom = roomRepository.findById(roomId);
+        if(theRoom.isPresent()){
+            roomRepository.deleteById(roomId);
+        }
+    }
+
+    @Override
+    public Room updateRoom(Long roomId, String roomType, BigDecimal roomPrice, byte[] photoBytes) {
+        Room room = roomRepository.findById(roomId).get();
+        if (roomType != null) room.setRoomType(roomType);
+        if (roomPrice != null) room.setRoomPrice(roomPrice);
+        if (photoBytes != null && photoBytes.length > 0) {
+            try {
+                room.setPhoto(new SerialBlob(photoBytes));
+            } catch (SQLException ex) {
+                throw new InternalServerException("Fail updating room");
+            }
+        }
+        return roomRepository.save(room);
+    }
+
+    @Override
+    public Optional<Room> getRoomById(Long roomId) {
+        return Optional.of(roomRepository.findById(roomId).get());
+    }
+
+    @Override
+    public List<Room> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, String roomType) {
+        return roomRepository.findAvailableRoomsByDatesAndType(checkInDate, checkOutDate, roomType);
     }
 
 
