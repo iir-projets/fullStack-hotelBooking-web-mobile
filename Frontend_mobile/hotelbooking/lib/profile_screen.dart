@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'intro_screen.dart'; // Import the IntroScreen if not already imported
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -11,9 +12,9 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 90), // Adjusted top spacing
+          SizedBox(height: 90),
           Padding(
-            padding: const EdgeInsets.only(left: 20.0), // Adjusted left padding
+            padding: const EdgeInsets.only(left: 20.0),
             child: Text(
               'Profile',
               style: TextStyle(
@@ -31,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 30),
-          Padding( // Added Padding widget to wrap the Text widget
+          Padding(
             padding: const EdgeInsets.only(left: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +47,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'John', // Replace with user's name
+                  'Ayda', // Replace with user's name
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -62,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Doe', // Replace with user's last name
+                  'Aboufaresse', // Replace with user's last name
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -78,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'john.doe@example.com',
+                  'ayda.aboufaresse@gmail.com',
                   style: TextStyle(
                     fontSize: 16,
                   ),
@@ -89,10 +90,35 @@ class ProfileScreen extends StatelessWidget {
           SizedBox(height: 50),
           Center(
             child: SizedBox(
-              width: screenWidth * 0.8, // Adjust button width as needed
+              width: screenWidth * 0.8,
               child: TextButton(
                 onPressed: () {
-                  // Handle log out button press
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Are you sure?"),
+                        content: Text("Do you want to log out?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => IntroScreen()),
+                              );
+                            },
+                            child: Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(

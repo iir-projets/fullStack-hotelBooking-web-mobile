@@ -10,10 +10,47 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
+    // Function to handle login authentication
+    void _login() {
+      String email = emailController.text;
+      String password = passwordController.text;
+
+      // Check if the entered email and password match the accepted credentials
+      if (email == 'ayda.aboufaresse@gmail.com' && password == 'Ayda2002@') {
+        // Navigate to the intended screen upon successful login
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BottomNavBar()),
+        );
+      } else {
+        // Display an error message or handle invalid credentials
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('Invalid email or password. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -77,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           hintText: 'Enter your email',
                           hintStyle: TextStyle(
@@ -114,6 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       child: TextField(
+                        controller: passwordController,
                         obscureText: true,
                         decoration: InputDecoration(
                           hintText: 'Enter your password',
@@ -134,9 +173,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                        );
+                            context,
+                            MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                          );
                         },
                         child: Text(
                           'Forgot your password?',
@@ -153,15 +192,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   Align(
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BottomNavBar()), // Replace BottomNavBar() with your intended screen widget
-                        );
-                      },
+                      onPressed: _login, // Call the login function
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromRGBO(169, 77, 123, 1)), // New button color
+                          Color.fromRGBO(169, 77, 123, 1), // New button color
+                        ),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
