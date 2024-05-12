@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 90),
+          SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.only(left: 20.0),
             child: Text(

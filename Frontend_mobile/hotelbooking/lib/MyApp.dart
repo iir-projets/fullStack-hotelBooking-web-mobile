@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hotelbooking/browse_screen.dart';
+import 'package:hotelbooking/find_my_room_screen.dart';
 
 import 'splash_screen.dart';
 class MyApp extends StatelessWidget {

@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:http/http.dart' as http;
 
-import 'card.dart';
+import 'browse_screen.dart';
+import 'card.dart'; // Import your CardWithImage widget
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -15,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _timer;
+  List<Room> rooms = []; // List to hold room data
 
   @override
   void initState() {
@@ -31,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
         curve: Curves.easeInOut,
       );
     });
+    fetchRooms(); // Fetch room data when the screen initializes
   }
 
   @override
@@ -60,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
-            CardWithImage(),
+            _buildCardWithImage(),
             SizedBox(height: 20,),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -75,6 +80,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
             _buildServicesList(),
+            SizedBox(height: 20),// Display card with room data
           ],
         ),
       ),
@@ -131,6 +137,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
   Widget _buildServicesList() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,6 +148,36 @@ class _MainScreenState extends State<MainScreen> {
         _buildServiceTile("Enjoy a refreshing drink or snack from our in-room mini-bar", Icons.local_bar),
         _buildServiceTile("Park your car conveniently in our on-site parking lot", Icons.local_parking),
         _buildServiceTile("Stay cool and comfortable with our air conditioning system", Icons.ac_unit),
+      ],
+    );
+  }
+
+  Widget _buildCardWithImage() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FutureBuilder<List<Room>>(
+          future: fetchRooms(), // Fetch room data asynchronously
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator(); // Display loading indicator while fetching data
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}'); // Display error if fetching data fails
+            } else {
+              // Display one room card if data is fetched successfully
+              final room = snapshot.data!.first; // Get the first room from the list
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CardWithImage(
+                  roomId: room.id,
+                  roomType: room.type,
+                  roomPrice: room.price,
+                  roomPhotoBase64: room.photoBase64,
+                ),
+              );
+            }
+          },
+        ),
       ],
     );
   }
@@ -157,6 +194,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
   Widget _buildImageWithText(String prefix, String hotelName, String subtitle, String imagePath) {
     return Stack(
       fit: StackFit.expand,
@@ -212,5 +250,25 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ],
     );
+  }
+
+  // Fetch room data asynchronously
+  Future<List<Room>> fetchRooms() async {
+    try {
+      final response = await http.get(Uri.parse('http://192.168.56.21:9192/rooms/all-rooms'));
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = json.decode(response.body);
+        return responseData.map((data) => Room(
+          id: data['id'],
+          type: data['roomType'],
+          price: data['roomPrice'].toDouble(),
+          photoBase64: data['photo'],
+        )).toList();
+      } else {
+        throw Exception('Failed to load rooms');
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 }
