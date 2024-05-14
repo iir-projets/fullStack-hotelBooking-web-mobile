@@ -3,9 +3,9 @@ trigger:
   - main
 
 pool:
-  name: Continuous delivery - agent
+  name: Azure Pipelines
   demands:
-  - agent.name -equals DESKTOP-I5O01QK
+  - agent.name -equals Hosted Agent
 
 
 variables:
