@@ -1,0 +1,26 @@
+# Utilisation de l'image de base pour Flutter
+FROM cirrusci/flutter AS builder
+
+# Définition du répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copie des fichiers de l'application Flutter dans le conteneur
+COPY . .
+
+# Construction de l'application Flutter
+RUN flutter build apk --release
+
+# Utilisation d'une image légère pour servir l'application Flutter
+FROM nginx:alpine
+
+# Copie des fichiers construits de l'application Flutter dans le conteneur Nginx
+COPY --from=builder /hotelbooking/build/app/ /usr/share/nginx/html
+
+# Exposition du port 80
+EXPOSE 80
+
+# Commande pour démarrer Nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+
+
